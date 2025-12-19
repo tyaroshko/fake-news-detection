@@ -75,7 +75,9 @@ class ClassificationService:
                 self.models[model_name] = model
                 self.tokenizers[model_name] = tokenizer
                 logger.info(f"Successfully loaded model: {model_name}")
-                logger.info(f"Model label mapping: {model.config.id2label if hasattr(model.config, 'id2label') else 'No label mapping'}")
+                logger.info(
+                    f"Model label mapping: {model.config.id2label if hasattr(model.config, 'id2label') else 'No label mapping'}"
+                )
             except Exception as e:
                 logger.error(f"Failed to load model {model_name}: {e}")
                 raise

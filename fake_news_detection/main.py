@@ -10,8 +10,9 @@ from data_loader import FakeNewsDataLoader
 from evaluator import FakeNewsEvaluator
 from model import FakeNewsModel
 from predictor import FakeNewsPredictor
-from utils import ensure_dir, get_device, save_json, set_seed
 from visualizer import FakeNewsVisualizer
+
+from utils import ensure_dir, get_device, save_json, set_seed
 
 
 def train_model(config: Config):
@@ -195,7 +196,7 @@ def main():
         # Create configuration
         config = Config()
         config.data.data_path = args.data_path
-        
+
         # Handle quick run / sample ratio
         if args.sample_ratio is not None:
             config.data.sample_ratio = args.sample_ratio

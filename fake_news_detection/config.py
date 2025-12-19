@@ -33,7 +33,9 @@ class TrainingConfig:
     gradient_accumulation_steps: int = 2
     fp16: bool = torch.cuda.is_available()
     seed: int = 42
-    eval_strategy: str = "steps"  # Updated from evaluation_strategy (new parameter name)
+    eval_strategy: str = (
+        "steps"  # Updated from evaluation_strategy (new parameter name)
+    )
     save_strategy: str = "steps"
     load_best_model_at_end: bool = True
     metric_for_best_model: str = "f1"
@@ -41,7 +43,9 @@ class TrainingConfig:
     early_stopping_patience: int = 3
     report_to: str = "wandb"  # Options: "none", "wandb", "tensorboard", "all"
     wandb_project: str = "fake-news-detection"
-    use_gradient_checkpointing: bool = False  # Enable to reduce memory usage at cost of speed
+    use_gradient_checkpointing: bool = (
+        False  # Enable to reduce memory usage at cost of speed
+    )
 
 
 @dataclass
@@ -56,7 +60,9 @@ class DataConfig:
     title_column: Optional[str] = "title"
     combine_title_text: bool = True
     random_state: int = 42
-    sample_ratio: Optional[float] = None  # If set, use only this fraction of data (e.g., 0.1 for 10%)
+    sample_ratio: Optional[float] = (
+        None  # If set, use only this fraction of data (e.g., 0.1 for 10%)
+    )
 
 
 @dataclass

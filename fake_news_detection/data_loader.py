@@ -102,9 +102,13 @@ class FakeNewsDataLoader:
         if self.config.sample_ratio is not None:
             if not 0 < self.config.sample_ratio <= 1:
                 raise ValueError("sample_ratio must be between 0 and 1")
-            print(f"\n⚡ QUICK RUN MODE: Using {self.config.sample_ratio*100:.0f}% of data")
+            print(
+                f"\n⚡ QUICK RUN MODE: Using {self.config.sample_ratio * 100:.0f}% of data"
+            )
             df = df.groupby(self.config.label_column, group_keys=False).apply(
-                lambda x: x.sample(frac=self.config.sample_ratio, random_state=self.config.random_state)
+                lambda x: x.sample(
+                    frac=self.config.sample_ratio, random_state=self.config.random_state
+                )
             )
             print(f"Sampled dataset shape: {df.shape}")
 

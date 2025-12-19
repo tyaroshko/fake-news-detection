@@ -16,6 +16,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+
 from utils import ensure_dir
 
 
@@ -235,10 +236,10 @@ class FakeNewsModel:
     def push_to_hub(self, repo_name: str):
         """
         Push model to Hugging Face Hub
-        
+
         Args:
             repo_name: Name of the repository (username/repo-name or repo-name)
-        
+
         Raises:
             ValueError: If not logged in or authentication fails
         """
@@ -251,16 +252,16 @@ class FakeNewsModel:
             raise ValueError(
                 f"Not logged in to Hugging Face. Please run 'huggingface-cli login' first. Error: {e}"
             )
-        
+
         # Initialize HF API
         api = HfApi()
-        
+
         # Parse repo_name to get full repository ID
         if "/" not in repo_name:
             full_repo_name = f"{username}/{repo_name}"
         else:
             full_repo_name = repo_name
-        
+
         # Check if repository already exists
         try:
             repo_info = api.repo_info(repo_id=full_repo_name, repo_type="model")
@@ -271,10 +272,14 @@ class FakeNewsModel:
                 print("Push cancelled.")
                 return
         except RepositoryNotFoundError:
-            print(f"✓ Repository '{full_repo_name}' does not exist. Creating new repository...")
-        
+            print(
+                f"✓ Repository '{full_repo_name}' does not exist. Creating new repository..."
+            )
+
         # Push model and tokenizer
         print(f"Pushing model to {full_repo_name}...")
         self.model.push_to_hub(full_repo_name)
         self.tokenizer.push_to_hub(full_repo_name)
-        print(f"✓ Model successfully pushed to Hugging Face Hub: https://huggingface.co/{full_repo_name}")
+        print(
+            f"✓ Model successfully pushed to Hugging Face Hub: https://huggingface.co/{full_repo_name}"
+        )
