@@ -1,0 +1,103 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+aiosqlite
+pydantic
+python-multipart
+transformers
+torch
+litellm
+numpy
+scikit-learn
+pandas
+httpx
+
+
+
+from(bucket: "firstbucket")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_5" or r["device"] == "AirConditioner_8")
+
+
+data = from(bucket: "firstbucket")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_5" or r["device"] == "AirConditioner_8")
+  |> mean()
+
+
+
+data = from(bucket: "test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_5" or r["device"] == "AirConditioner_8")
+
+meanData = data
+  |> mean()
+  |> yield(name: "mean")
+
+maxData = data
+  |> max()
+  |> yield(name: "max")
+
+
+
+
+from(bucket: "test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_5" or r["device"] == "AirConditioner_8")
+  |> group(columns: ["_field"])
+  |> yield(name: "allinonetable")
+  |> min()
+  |> yield(name: "min")
+
+
+from(bucket: "test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_5" or r["device"] == "AirConditioner_8")
+  |> yield(name: "before")
+  |> filter(fn: (r) => if r["device"] == "AirConditioner_5" then r._value > 72.0 else r._value < 72.0)
+  |> yield(name: "conditions")
+
+
+from(bucket: "test")
+    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+    |> filter(fn: (r) => r["_measurement"] == "test")
+    |> filter(fn: (r) => r["_field"] == "Temperature")
+    |> filter(fn: (r) => r["device"] == "AirConditioner_5")
+    |> yield(name: "before")
+    |> aggregateWindow(every: 30s, fn: mean, createEmpty: false)
+    |> yield(name: "mean")
+
+
+data = from(bucket: "test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_1")
+
+data |> aggregateWindow(every: 30s, fn: mean, createEmpty: false)
+  |> yield(name: "mean")
+data |> aggregateWindow(every: 30s, fn: max, createEmpty: false)
+  |> yield(name: "max")
+data |> aggregateWindow(every: 30s, fn: min, createEmpty: false)
+  |> yield(name: "min")
+
+from(bucket: "test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "test")
+  |> filter(fn: (r) => r["_field"] == "Temperature")
+  |> filter(fn: (r) => r["device"] == "AirConditioner_1" or r["device"] == "AirConditioner_6")
+  |> pivot(rowKey:["_time"], columnKey: ["device"], valueColumn: "_value")
+  |> keep(columns: ["_time", "AirConditioner_1", "AirConditioner_6"])
+  |> map(fn: (r) => ({ r with difference: r.AirConditioner_1 - r.AirConditioner_6 }))
+  |> yield(name: "Temperature")
